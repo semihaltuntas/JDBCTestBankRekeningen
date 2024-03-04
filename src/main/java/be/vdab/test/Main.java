@@ -15,7 +15,7 @@ public class Main {
 
         while (choice != 4) {
             System.out.println("1.Nieuwe rekening toevoegen" + "\n" + "2.Toon saldo" + "\n" + "3.Geld overschrijving" + "\n" + "4.EXİT");
-            System.out.println("Seçiminizi girin: ");
+            System.out.println("Maak een Keuze Aub!: ");
             choice = scanner.nextInt();
             scanner.nextLine();
 
@@ -41,7 +41,7 @@ public class Main {
 
                     try {
                         Optional<BigDecimal> saldo = repository.getSaldo(rekeningNummer2);
-                        System.out.println("Saldo: " + saldo);
+                        System.out.println("Saldo: " + saldo.get());
                     } catch (SQLException ex) {
                         ex.printStackTrace(System.err);
                     }
@@ -55,8 +55,12 @@ public class Main {
                     BigDecimal bedrag = scanner.nextBigDecimal();
 
                     try {
-                        repository.overschrijven(vanNummer, naarNummer, bedrag);
-                        System.out.println("De geldoverdracht is succesvol uitgevoerd.");
+                        if (repository.overschrijven(vanNummer, naarNummer, bedrag)){
+                            System.out.println("De geldoverdracht is succesvol uitgevoerd.");
+                        }else{
+                            System.out.println("Helaas,opnieuw probeer!");
+                        }
+
                     } catch (SQLException ex) {
                         ex.printStackTrace(System.err);
                     }

@@ -13,14 +13,18 @@ public class BankRekeningRepository extends AbstractRepository {
     public void addNieuweRekening(BankRekening bankrekening) throws SQLException {
         boolean isValid = isBankrekeningnummerValid(bankrekening.bankregeningNummer());
         if (!isValid) {
-            throw new IllegalArgumentException("Ongeldig Bankrekening Nummer");
+            System.err.println("Ongeldig Bankrekening Nummer!");
         }
         var sql = """ 
-                insert into rekeningen(nummer) 
-                values (?) """;
-        try (var connection = super.getConnection()) {
-            try (var statementInsert = connection.prepareStatement(sql)) {
+                insert into rekeningen(nummer, saldo) 
+                values (?,?) """;
+        try (Connection connection = super.getConnection()) {
+            try (PreparedStatement statementInsert = connection.prepareStatement(sql)) {
                 statementInsert.setString(1, bankrekening.bankregeningNummer());
+                if (bankrekening.saldo().isPresent()){
+                    statementInsert.setBigDecimal(2, bankrekening.saldo().get());
+                }
+
                 connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
                 connection.setAutoCommit(false);
                 statementInsert.executeUpdate();
@@ -84,20 +88,29 @@ public class BankRekeningRepository extends AbstractRepository {
         // System.out.println(saldoVan);
 
         if (!saldoNaar.isPresent()) {
-            throw new IllegalArgumentException("De ontvangende rekening staat niet in de database.");
+            System.err.println("De ontvangende rekening staat niet in de database!");
+            return false;
         }
         if (!saldoVan.isPresent()){
-            throw new IllegalArgumentException("De rekening van de afzender staat niet in de database.");
+            System.err.println("De rekening van de afzender staat niet in de database!");
+            return false;
+        }
+        if ((saldoVan.isPresent() && saldoVan.get().compareTo(bedrag) < 0)){
+            System.err.println("Het bedrag dat u wilt versturen mag niet groter zijn dan het bedrag op de rekening. ");
+            return false;
         }
 
         if (vanNummer.equals(naarNummer)) {
-            throw new IllegalArgumentException("Geen twee rekeningnummers kunnen hetzelfde zijn.");
+            System.err.println("Geen twee rekeningnummers kunnen hetzelfde zijn!");
+            return false;
         }
         if (bedrag.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Ongeldige bedrag om te stoorten.");
+            System.err.println("Ongeldige bedrag om te stoorten!");
+            return false;
         }
         if (saldoVan.get().compareTo(bedrag) < 0) {
-            throw new IllegalArgumentException("Onvoldoende saldo.");
+            System.err.println("Onvoldoende saldo!");
+            return false;
         }
 
         String updateSql = """
