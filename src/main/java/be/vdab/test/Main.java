@@ -66,7 +66,7 @@ public class Main {
                     }
                 }
                 case 4 -> {
-                    System.out.println("het programma afsluiten");
+                    System.out.println("Het programma afsluiten");
                 }
 
                 default -> System.out.println("Ongeldige verkiezing");

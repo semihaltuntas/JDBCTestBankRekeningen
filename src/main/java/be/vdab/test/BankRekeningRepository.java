@@ -42,7 +42,7 @@ public class BankRekeningRepository extends AbstractRepository {
                         System.err.println("Rekening bestaat al.");
                     }
                     connection.rollback();
-                    // throw ex;
+
                 }
             }
         }
