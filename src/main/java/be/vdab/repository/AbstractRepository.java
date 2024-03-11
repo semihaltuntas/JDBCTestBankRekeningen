@@ -1,4 +1,4 @@
-package be.vdab.test;
+package be.vdab.repository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
