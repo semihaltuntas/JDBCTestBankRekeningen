@@ -19,7 +19,6 @@ public class BankRekeningRepository extends AbstractRepository {
 
     public void addNieuweRekening(BankRekening bankrekening) throws SQLException {
         try {
-           // Rekeningnummer rekeningnummer = new Rekeningnummer(bankrekening.bankregeningNummer());
             String sql = """ 
                     insert into rekeningen(nummer, saldo) 
                     values (?,?) """;
@@ -76,7 +75,8 @@ public class BankRekeningRepository extends AbstractRepository {
         }
     }
 
-    public boolean overschrijven(String vanNummer, String naarNummer, BigDecimal bedrag) throws OverschrijvingException, OnvoldoendeSaldoException, RekeningNietGevondenException {
+    public boolean overschrijven(String vanNummer, String naarNummer, BigDecimal bedrag)
+            throws OverschrijvingException, OnvoldoendeSaldoException, RekeningNietGevondenException {
 
         String updateVanSql = """
                 update rekeningen 
